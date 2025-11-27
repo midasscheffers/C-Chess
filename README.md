@@ -1,7 +1,8 @@
 # C-Chess
+MidMac - Midas Machine
 
-## idea
-In this project I hope to learn the basics of C by making a chess engine.
+## Idea
+In this project I hope to learn the basics of C by making a chess engine. 
 
 ## TODO
 - setting pieces on the board
