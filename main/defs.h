@@ -82,6 +82,7 @@ typedef struct
 
 // init.c
 
+extern int KnightMovesOnSq[BRD_SQ_NUM][8];
 extern void AllInit();
 
 // bitboards.c
