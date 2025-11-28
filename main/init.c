@@ -11,6 +11,8 @@ int onBoard(int x, int y){
     return TRUE;
 }
 
+
+// precalcualte knight moves
 int KnightMovesOnSq[BRD_SQ_NUM][8];
 
 void InitKnightMoves(){
@@ -37,6 +39,15 @@ void InitKnightMoves(){
 }
 
 
+// precalcualte sliding moves
+int SlidingMovesOnSq[BRD_SQ_NUM][8][7];
+
+void InitSlidingMoves(){
+    
+}
+
+
 void AllInit(){
     InitKnightMoves();
+    InitSlidingMoves();
 }

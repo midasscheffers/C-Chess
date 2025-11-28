@@ -82,7 +82,8 @@ typedef struct
 
 // init.c
 
-extern int KnightMovesOnSq[BRD_SQ_NUM][8];
+extern int KnightMovesOnSq[BRD_SQ_NUM][8]; // sq - moves
+extern int SlidingMovesOnSq[BRD_SQ_NUM][8][7]; // sq - dir - moves
 extern void AllInit();
 
 // bitboards.c
