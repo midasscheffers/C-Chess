@@ -89,5 +89,7 @@ extern void AllInit();
 // bitboards.c
 
 extern void printBitBoard(U64 bb);
+extern int CountBits(U64 bb);
+extern int PopBit(U64 *bb);
 
 #endif

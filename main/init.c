@@ -62,7 +62,7 @@ void InitSlidingMoves(){
                     break;
                 }
             }
-            for(index; index < 8; index++){
+            for(index; index < 7; index++){
                 SlidingMovesOnSq[i][d][index] = NO_SQ;
             }
         }

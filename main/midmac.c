@@ -4,14 +4,16 @@
 int main() {
     printf("\n");
 
+    // seed move arrays
     AllInit();
 
+    // print test
     for (int i = 0; i < 64 ; i++){
         printf("%3d", i);
         if (i%8==7) printf("\n");
     }
     printf("\n");
-    int sq = B2;
+    int sq = A1;
     U64 testbb = 1ULL << sq;
     printBitBoard(testbb);
     printf("\n");
@@ -28,6 +30,16 @@ int main() {
         }
         printf("\n");
     }
-
+    printf("\n");
+    // add more pieces to the test bb
+    testbb |= 1ULL << B3;
+    testbb |= 1ULL << E4;
+    printBitBoard(testbb);
+    int sq64 = 0;
+    while (testbb){
+        sq64 = PopBit(&testbb);
+        printf("Found Piece at: %d\n", sq64);
+        printBitBoard(testbb);
+    }
     return 0;
 }
