@@ -26,6 +26,15 @@ int CountBits(U64 bb){
 }
 
 
+void SetBit(U64 *bb, int sq){
+    *bb |= SetMask[sq];
+}
+
+void ClearBit(U64 *bb, int sq){
+    *bb &= ClearMask[sq];
+}
+
+
 
 void printBitBoard(U64 bb){
     U64 one = 1ULL;

@@ -82,8 +82,12 @@ typedef struct
 
 // init.c
 
+extern U64 SetMask[64];
+extern U64 ClearMask[64];
+
 extern int KnightMovesOnSq[BRD_SQ_NUM][8]; // sq - moves
 extern int SlidingMovesOnSq[BRD_SQ_NUM][8][7]; // sq - dir - moves
+
 extern void AllInit();
 
 // bitboards.c
@@ -91,5 +95,7 @@ extern void AllInit();
 extern void printBitBoard(U64 bb);
 extern int CountBits(U64 bb);
 extern int PopBit(U64 *bb);
+extern void ClearBit(U64 *bb, int sq);
+extern void SetBit(U64 *bb, int sq);
 
 #endif

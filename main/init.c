@@ -69,8 +69,26 @@ void InitSlidingMoves(){
     }
 }
 
+// masks for fast setting and clearing bits
+U64 SetMask[64];
+U64 ClearMask[64];
+
+void InitSetClearMasks(){
+    int index = 0;
+    for (index; index<BRD_SQ_NUM; index++){
+        SetMask[index] = 0ULL;
+        ClearMask[index] = 0ULL;
+    }
+    index = 0;
+    for (index; index<BRD_SQ_NUM; index++){
+        SetMask[index] = 1ULL<<index;
+        ClearMask[index] = ~SetMask[index];
+    }
+}
+
 
 void AllInit(){
     InitKnightMoves();
     InitSlidingMoves();
+    InitSetClearMasks();
 }

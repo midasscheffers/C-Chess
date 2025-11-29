@@ -13,7 +13,7 @@ int main() {
         if (i%8==7) printf("\n");
     }
     printf("\n");
-    int sq = A1;
+    int sq = G7;
     U64 testbb = 1ULL << sq;
     printBitBoard(testbb);
     printf("\n");
@@ -32,8 +32,8 @@ int main() {
     }
     printf("\n");
     // add more pieces to the test bb
-    testbb |= 1ULL << B3;
-    testbb |= 1ULL << E4;
+    SetBit(&testbb, E4);
+    SetBit(&testbb, B7);
     printBitBoard(testbb);
     int sq64 = 0;
     while (testbb){
