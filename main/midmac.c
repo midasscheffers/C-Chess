@@ -42,16 +42,26 @@ int main() {
     //     printBitBoard(testbb);
     // }
 
-    S_BOARD board;
-    generateMoves(&board);
+    S_BOARD board[1];
+    
+    ResetBoard(board);
+
+    int _ = LoadFen(START_FEN, board);
+
+    PrintBoard(board);
+
+    // for (int i = 0; i<13; ++i){
+    //     printf("BB %d:\n", i);
+    //     printBitBoard(board->bitBoards[i]);
+    // }
 
 
-    for(int i = 0; i<10; i++){
-        printf("Possible move %d: ", i);
-        printf("%d\n", possible_moves[i]);
-    }
-    printf("...\n");
+    // for(int i = 0; i<10; i++){
+    //     printf("Possible move %d: ", i);
+    //     printf("%d\n", possible_moves[i]);
+    // }
+    // printf("...\n");
 
-    printf("\n");
+    // printf("\n");
     return 0;
 }

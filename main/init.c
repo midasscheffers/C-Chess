@@ -1,7 +1,38 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "defs.h"
+
+#define RAND_64 ((U64)rand() | \
+                (U64)rand() << 15 | \
+                (U64)rand() << 30 | \
+                (U64)rand() << 45 | \
+                ((U64)rand() & 0xf) << 60)
+
+// Init hashkeys
+U64 PieceKeys[13][64];
+U64 sideKey;
+U64 castleKey[16];
+
+
+void InitHashKeys(){
+    int i = 0;
+    int j = 0;
+    for(i=0; i<13; i++){
+        for (j=0;j<64; j++){
+            PieceKeys[i][j] = RAND_64;
+        }
+    }
+    sideKey = RAND_64;
+    for(i = 0;i<16; i++){
+        castleKey[i] = RAND_64;
+    }
+}
+
+
+
+
 
 // check if a x,y pos is on the board
 int onBoard(int x, int y){
@@ -86,8 +117,9 @@ void InitSetClearMasks(){
     }
 }
 
+
 // set possible moves to the null array;
-M possible_moves[MAX_POS_MOVES_ONE_POS];
+U32 possible_moves[MAX_POS_MOVES_ONE_POS];
 void InitGenMoves(){
     for (int i=0; i<BRD_SQ_NUM; i++){
         possible_moves[i] = NULL_MOVE;
@@ -96,6 +128,7 @@ void InitGenMoves(){
 
 
 void AllInit(){
+    InitHashKeys();
     InitKnightMoves();
     InitSlidingMoves();
     InitSetClearMasks();

@@ -1,24 +1,157 @@
 
 
-
+#include <stdio.h>
 #include "defs.h"
 
 
 
-
-void ResetBoard(){
-
-}
-
-void SetPiece(int p, int sq){
+int alg_to_sq(char alg_sq[2]){
 
 }
 
-void RemovePiece(int p, int sq){
-    
+
+void SetPiece(int p, int sq, S_BOARD *pos){
+    SetBit(&(pos->bitBoards[p]), sq);
+    pos->pieces[sq] = p;
+}
+
+void RemovePiece(int p, int sq, S_BOARD *pos){
+    ClearBit(&(pos->bitBoards[p]), sq);
+    pos->pieces[sq] = EMPTY;
 }
 
 
-void LoadFen(){
-    
+
+
+void ResetBoard(S_BOARD *pos){
+    int i = 0;
+    for (i = 0; i<BRD_SQ_NUM; ++i){
+        pos->pieces[i]=EMPTY;
+    }
+    for (i = 0; i<13; ++i){
+        pos->bitBoards[i]=0ULL;
+    }
+    pos->toMove = BOTH;
+    pos->epSq = NO_SQ;
+    pos->fiftyMove = 0;
+    pos->ply = 0;
+    pos->hisPly = 0;
+    pos->castlePerm = 0;
+    pos->posKey = 0ULL;
+}
+
+
+int LoadFen(char *FEN, S_BOARD *pos){
+    int rank = RANK_1;
+    int file = FILE_A;
+    int piece = 0;
+    int sq64;
+    int count;
+    int i;
+    ResetBoard(pos);
+
+    while ((rank<= RANK_8) && *FEN){
+        count = 1;
+        switch (*FEN){
+            case 'K': piece = wK; break;
+            case 'P': piece = wP; break;
+            case 'N': piece = wN; break;
+            case 'B': piece = wB; break;
+            case 'R': piece = wR; break;
+            case 'Q': piece = wQ; break;
+            case 'k': piece = bK; break;
+            case 'p': piece = bP; break;
+            case 'n': piece = bN; break;
+            case 'b': piece = bB; break;
+            case 'r': piece = bR; break;
+            case 'q': piece = bQ; break;
+
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+                piece = EMPTY;
+                count = *FEN - '0';
+                break;
+            
+            case '/':
+            case ' ':
+                rank++;
+                file = FILE_A;
+                FEN++;
+                continue;
+            
+                default:
+                    printf("FEN error\n");
+                    return -1;
+        }
+        
+        for (i= 0; i<count; i++){
+            sq64 = rank*8+file;
+            if (piece != EMPTY){
+                SetPiece(piece, sq64, pos);
+            }
+            file++;
+        }
+        FEN++;
+    }
+    // set side to move
+    pos->toMove = (*FEN == 'w') ? WHITE : BLACK;
+    FEN += 2;
+    //set casteling perm
+    for (i=0; i<4; i++){
+        if (*FEN == ' '){
+            break;
+        }
+        switch (*FEN){
+            case 'K': pos->castlePerm |= WKCA; break;
+            case 'Q': pos->castlePerm |= WQCA; break;
+            case 'k': pos->castlePerm |= BKCA; break;
+            case 'q': pos->castlePerm |= BQCA; break;
+            default: break;
+        }
+        FEN++;
+    }
+    FEN++;
+
+    // set ep square
+    if (*FEN != '-'){
+        file = 8-(FEN[0] - 'a');
+        rank = FEN[1] - '1';
+        pos->epSq = rank+8*file;
+    }
+
+    // gen hash
+    pos->posKey = GeneratePosKey(pos);
+
+    return 0;
+}
+
+
+void PrintBoard(S_BOARD *pos){
+    for(int i = 0; i<BRD_SQ_NUM; ++i){
+        int piece = pos->pieces[i];
+        char piece_char;
+        switch (piece){
+            case wK: piece_char = 'K'; break;
+            case wP: piece_char = 'P'; break;
+            case wN: piece_char = 'N'; break;
+            case wB: piece_char = 'B'; break;
+            case wR: piece_char = 'R'; break;
+            case wQ: piece_char = 'Q'; break;
+            case bK: piece_char = 'k'; break;
+            case bP: piece_char = 'p'; break;
+            case bN: piece_char = 'n'; break;
+            case bB: piece_char = 'b'; break;
+            case bR: piece_char = 'r'; break;
+            case bQ: piece_char = 'q'; break;
+            default: piece_char = '.'; break;
+        }
+        printf("%c", piece_char);
+        if(i%8==7) printf("\n");
+    }
 }

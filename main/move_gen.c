@@ -51,7 +51,7 @@ void generateMoves(S_BOARD *board){
                 break;
             }
             // still have to check if the given sq is occupied by friend piece
-            M m = (unsigned) sq64 | (target<<6);
+            U32 m = (unsigned) sq64 | (target<<6);
             possible_moves[index] = m;
             index++;
         }

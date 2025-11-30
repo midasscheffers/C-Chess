@@ -24,13 +24,14 @@ exit(1);}
 
 // make u64 type
 typedef unsigned long long U64;
-typedef unsigned long M;
+typedef unsigned long U32;
 
 #define NAME "MidMec 0.01"
 #define BRD_SQ_NUM 64
 
 #define MAX_POS_MOVES 4092
 #define MAX_POS_MOVES_ONE_POS 256
+#define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 enum {EMPTY, wK, wP, wN, wB, wR, wQ, bK, bP, bN, bB, bR, bQ}; // 0 EMPTY 1-6 White 7-12 Black
 enum {NONE, WHITE, BLACK, BOTH};
@@ -57,7 +58,7 @@ enum {FALSE, TRUE};
 
 
 typedef struct {
-    M move;
+    U32 move;
     int castlePer;
     int enSq;
     int fiftyMove;
@@ -67,6 +68,7 @@ typedef struct {
 typedef struct
 {
     U64 bitBoards[13];
+    int pieces[BRD_SQ_NUM];
     int pList[13][10];
     int epSq;
     int castlePerm;
@@ -78,6 +80,7 @@ typedef struct
     U64 posKey;
 
     S_UNDO history[MAX_POS_MOVES];
+
 
 
 
@@ -104,8 +107,22 @@ extern void SetBit(U64 *bb, int sq);
 
 // move_gen.c
 
-extern M possible_moves[MAX_POS_MOVES_ONE_POS];
+extern U32 possible_moves[MAX_POS_MOVES_ONE_POS];
 extern void generateMoves(S_BOARD *board);
+
+
+// hashkey.c
+
+extern U64 PieceKeys[13][64];
+extern U64 sideKey;
+extern U64 castleKey[16];
+extern U64 GeneratePosKey(const S_BOARD *pos);
+
+// board.c
+
+extern void ResetBoard(S_BOARD *pos);
+extern int LoadFen(char *FEN, S_BOARD *pos);
+extern void PrintBoard(S_BOARD *pos);
 
 
 
