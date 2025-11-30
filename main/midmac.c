@@ -8,11 +8,11 @@ int main() {
     AllInit();
 
     // print tests
-    // for (int i = 0; i < 64 ; i++){
-    //     printf("%3d", i);
-    //     if (i%8==7) printf("\n");
-    // }
-    // printf("\n");
+    for (int i = 0; i < 64 ; i++){
+        printf("%3d", i);
+        if (i%8==7) printf("\n");
+    }
+    printf("\n");
     // int sq = G7;
     // U64 testbb = 1ULL << sq;
     // printBitBoard(testbb);
@@ -42,11 +42,16 @@ int main() {
     //     printBitBoard(testbb);
     // }
 
-    generateMoves();
+    S_BOARD board;
+    generateMoves(&board);
+
 
     for(int i = 0; i<10; i++){
-        printf("Possible move %d: %d\n", i, possible_moves[i]);
+        printf("Possible move %d: ", i);
+        printf("%d\n", possible_moves[i]);
     }
+    printf("...\n");
 
+    printf("\n");
     return 0;
 }

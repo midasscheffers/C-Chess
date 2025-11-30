@@ -24,6 +24,7 @@ exit(1);}
 
 // make u64 type
 typedef unsigned long long U64;
+typedef unsigned long M;
 
 #define NAME "MidMec 0.01"
 #define BRD_SQ_NUM 64
@@ -47,7 +48,7 @@ enum{
     A1, B1, C1, D1, E1, F1, G1, H1, NO_SQ
 };
 
-enum{NULL_MOVE=-1};
+enum{NULL_MOVE=~0UL};
 
 
 enum {WKCA = 8, WQCA = 4, BKCA=2, BQCA=1};
@@ -56,7 +57,7 @@ enum {FALSE, TRUE};
 
 
 typedef struct {
-    int move;
+    M move;
     int castlePer;
     int enSq;
     int fiftyMove;
@@ -103,8 +104,8 @@ extern void SetBit(U64 *bb, int sq);
 
 // move_gen.c
 
-extern int possible_moves[MAX_POS_MOVES_ONE_POS];
-extern void generateMoves();
+extern M possible_moves[MAX_POS_MOVES_ONE_POS];
+extern void generateMoves(S_BOARD *board);
 
 
 
