@@ -121,7 +121,7 @@ void InitSetClearMasks(){
 // set possible moves to the null array;
 U32 possible_moves[MAX_POS_MOVES_ONE_POS];
 void InitGenMoves(){
-    for (int i=0; i<BRD_SQ_NUM; i++){
+    for (int i=0; i<MAX_POS_MOVES_ONE_POS; i++){
         possible_moves[i] = NULL_MOVE;
     }
 }

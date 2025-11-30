@@ -5,22 +5,30 @@
 
 
 
-int alg_to_sq(char alg_sq[2]){
-
-}
-
 
 void SetPiece(int p, int sq, S_BOARD *pos){
     SetBit(&(pos->bitBoards[p]), sq);
     pos->pieces[sq] = p;
+    ClearBit(&(pos->emptyBB), sq);
+    if (p>=wK && p<=wQ){
+        SetBit(&(pos->whiteBB), sq);
+    }
+    else if (p>=bK && p<=bQ){
+        SetBit(&(pos->blackBB), sq);
+    }
 }
 
 void RemovePiece(int p, int sq, S_BOARD *pos){
     ClearBit(&(pos->bitBoards[p]), sq);
     pos->pieces[sq] = EMPTY;
+    SetBit(&(pos->emptyBB), sq);
+    if (p>=wK && p<=wQ){
+        ClearBit(&(pos->whiteBB), sq);
+    }
+    else if (p>=bK && p<=bQ){
+        ClearBit(&(pos->blackBB), sq);
+    }
 }
-
-
 
 
 void ResetBoard(S_BOARD *pos){
@@ -31,6 +39,9 @@ void ResetBoard(S_BOARD *pos){
     for (i = 0; i<13; ++i){
         pos->bitBoards[i]=0ULL;
     }
+    pos->blackBB = 0ULL;
+    pos->whiteBB = 0ULL;
+    pos->emptyBB = ~0ULL;
     pos->toMove = BOTH;
     pos->epSq = NO_SQ;
     pos->fiftyMove = 0;
@@ -160,7 +171,9 @@ void PrintBoard(S_BOARD *pos){
         printf("  %c", 'a'+file);
     }
     printf("\n\n");
-    printf("Side: %d\n", pos->toMove);
+    printf("Side: %c\n",
+        (pos->toMove == WHITE) ? 'w' : 'b'
+    );
     printf("Ep sq: %d\n", pos->epSq);
     printf("CP: %c%c%c%c\n",
         pos->castlePerm & WKCA ? 'K':'-',
@@ -169,4 +182,18 @@ void PrintBoard(S_BOARD *pos){
         pos->castlePerm & BQCA ? 'q':'-'
     );
     printf("PosKey: %llx\n", pos->posKey);
+}
+
+
+void BoardPrintBitBorads(S_BOARD *pos){
+    for (int i = 1; i<13; ++i){
+        printf("BB %d:\n", i);
+        printBitBoard(pos->bitBoards[i]);
+    }
+    printf("black BB:\n");
+    printBitBoard(pos->blackBB);
+    printf("white BB:\n");
+    printBitBoard(pos->whiteBB);
+    printf("empty BB:\n");
+    printBitBoard(pos->emptyBB);
 }

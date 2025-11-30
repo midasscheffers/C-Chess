@@ -68,6 +68,9 @@ typedef struct {
 typedef struct
 {
     U64 bitBoards[13];
+    U64 blackBB;
+    U64 whiteBB;
+    U64 emptyBB;
     int pieces[BRD_SQ_NUM];
     int pList[13][10];
     int epSq;
@@ -108,7 +111,7 @@ extern void SetBit(U64 *bb, int sq);
 // move_gen.c
 
 extern U32 possible_moves[MAX_POS_MOVES_ONE_POS];
-extern void generateMoves(S_BOARD *board);
+extern void generateMoves(S_BOARD *pos);
 
 
 // hashkey.c
@@ -123,6 +126,7 @@ extern U64 GeneratePosKey(const S_BOARD *pos);
 extern void ResetBoard(S_BOARD *pos);
 extern int LoadFen(char *FEN, S_BOARD *pos);
 extern void PrintBoard(S_BOARD *pos);
+extern void BoardPrintBitBorads(S_BOARD *pos);
 
 
 
