@@ -134,6 +134,7 @@ int LoadFen(char *FEN, S_BOARD *pos){
 
 void PrintBoard(S_BOARD *pos){
     for(int i = 0; i<BRD_SQ_NUM; ++i){
+        if(i%8==0) printf("%d   ", 8-i/8);
         int piece = pos->pieces[i];
         char piece_char;
         switch (piece){
@@ -151,7 +152,21 @@ void PrintBoard(S_BOARD *pos){
             case bQ: piece_char = 'q'; break;
             default: piece_char = '.'; break;
         }
-        printf("%c", piece_char);
+        printf("  %c", piece_char);
         if(i%8==7) printf("\n");
     }
+    printf("\n    ");
+    for (int file=0; file<=FILE_H; ++file){
+        printf("  %c", 'a'+file);
+    }
+    printf("\n\n");
+    printf("Side: %d\n", pos->toMove);
+    printf("Ep sq: %d\n", pos->epSq);
+    printf("CP: %c%c%c%c\n",
+        pos->castlePerm & WKCA ? 'K':'-',
+        pos->castlePerm & WQCA ? 'Q':'-',
+        pos->castlePerm & BKCA ? 'k':'-',
+        pos->castlePerm & BQCA ? 'q':'-'
+    );
+    printf("PosKey: %llx\n", pos->posKey);
 }
