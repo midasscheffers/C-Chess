@@ -4,7 +4,7 @@
 #define DEFS_H
 
 // include the sdt lib and basic assert functionality
-#include "stdlib.h"
+#include <stdlib.h>
 
 // toggle debug mode
 #define DEGUG
@@ -29,6 +29,7 @@ typedef unsigned long long U64;
 #define BRD_SQ_NUM 64
 
 #define MAX_POS_MOVES 4092
+#define MAX_POS_MOVES_ONE_POS 256
 
 enum {EMPTY, wK, wP, wN, wB, wR, wQ, bK, bP, bN, bB, bR, bQ}; // 0 EMPTY 1-6 White 7-12 Black
 enum {NONE, WHITE, BLACK, BOTH};
@@ -45,6 +46,8 @@ enum{
     A2, B2, C2, D2, E2, F2, G2, H2,
     A1, B1, C1, D1, E1, F1, G1, H1, NO_SQ
 };
+
+enum{NULL_MOVE=-1};
 
 
 enum {WKCA = 8, WQCA = 4, BKCA=2, BQCA=1};
@@ -97,5 +100,12 @@ extern int CountBits(U64 bb);
 extern int PopBit(U64 *bb);
 extern void ClearBit(U64 *bb, int sq);
 extern void SetBit(U64 *bb, int sq);
+
+// move_gen.c
+
+extern int possible_moves[MAX_POS_MOVES_ONE_POS];
+extern void generateMoves();
+
+
 
 #endif

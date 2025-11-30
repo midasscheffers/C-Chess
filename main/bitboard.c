@@ -1,5 +1,5 @@
 
-#include "stdio.h"
+#include <stdio.h>
 #include "defs.h"
 
 
@@ -12,6 +12,7 @@ const int BitTable[64] = {
     58, 20, 37, 17, 36, 8
 };
 
+//evil bit hacks to find index of lowest set bit
 int PopBit(U64 *bb){
     U64 b = *bb ^ (*bb - 1);
     unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b>>32));

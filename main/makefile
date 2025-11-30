@@ -1,2 +1,2 @@
 all:
-	gcc init.c midmac.c bitboard.c -o midmac 
+	gcc init.c midmac.c bitboard.c move_gen.c -o midmac 

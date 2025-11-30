@@ -1,9 +1,9 @@
 
 
-#include "stdio.h"
+#include <stdio.h>
 #include "defs.h"
 
-
+// check if a x,y pos is on the board
 int onBoard(int x, int y){
     if (x<0 || x>7 || y<0 || y>7){
         return FALSE;
@@ -86,9 +86,18 @@ void InitSetClearMasks(){
     }
 }
 
+// set possible moves to the null array;
+int possible_moves[MAX_POS_MOVES_ONE_POS];
+void InitGenMoves(){
+    for (int i=0; i<BRD_SQ_NUM; i++){
+        possible_moves[i] = NULL_MOVE;
+    }
+}
+
 
 void AllInit(){
     InitKnightMoves();
     InitSlidingMoves();
     InitSetClearMasks();
+    InitGenMoves();
 }
