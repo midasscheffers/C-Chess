@@ -82,7 +82,7 @@ void genarateRookMoves(int *index, S_BOARD *board){
     {   
         sq64 = PopBit(&current_bb);
         for(int d =0;d<8;++d){
-            if (d%2==0) continue;
+            if (d==0||d==2||d==5||d==7) continue;
             for (int i = 0; i<7; i++){
                 int target = SlidingMovesOnSq[sq64][d][i];
                 if (target == NO_SQ){
@@ -113,7 +113,7 @@ void genarateBishopMoves(int *index, S_BOARD *board){
     {   
         sq64 = PopBit(&current_bb);
         for(int d =0;d<8;++d){
-            if (d%2==1) continue;
+            if (d==1 || d==3 || d==4 || d==6) continue;
             for (int i = 0; i<7; i++){
                 int target = SlidingMovesOnSq[sq64][d][i];
                 if (target == NO_SQ){
