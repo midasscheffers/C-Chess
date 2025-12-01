@@ -16,7 +16,7 @@ int main() {
     // set up board
     S_BOARD board[1];
     ResetBoard(board);
-    int _ = LoadFen(START_FEN, board);
+    int _ = LoadFen("rnbqkbnr/pppppppp/8/8/8/8/5PPP/RNBQKBNR w KQkq - 0 1", board);
     PrintBoard(board);
     printf("\n");
 
