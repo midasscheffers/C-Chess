@@ -112,6 +112,7 @@ extern void SetBit(U64 *bb, int sq);
 
 extern U32 possible_moves[MAX_POS_MOVES_ONE_POS];
 extern void generateMoves(S_BOARD *pos);
+extern void PrintMoves();
 
 
 // hashkey.c

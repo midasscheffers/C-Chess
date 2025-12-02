@@ -190,6 +190,21 @@ void genarateKingMoves(int *index, S_BOARD *board){
 }
 
 
+void PrintMoves(){
+    for (int i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
+        if (possible_moves[i] == NULL_MOVE) break;
+        unsigned int  start = possible_moves[i]&0b111111;
+        unsigned int  target = (possible_moves[i]&0b111111000000)>>6;
+        char s_r = 8-start/8 + '0';
+        char s_f = start%8 + 'a';
+        char t_r = 8-target/8 + '0';
+        char t_f = target%8 + 'a';
+        printf("Move: %c%c, %c%c\n", s_f, s_r, t_f, t_r);
+    }
+    printf("\n");
+}
+
+
 void generateMoves(S_BOARD *pos){
     //set global index into the posibble_move array
     int index = 0;

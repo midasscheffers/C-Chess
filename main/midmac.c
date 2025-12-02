@@ -24,17 +24,7 @@ int main() {
     // move gen
     generateMoves(board);
     printf("Generated moves:\n");
-    int i;
-    for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
-        if (possible_moves[i] == NULL_MOVE) break;
-        unsigned int  start = possible_moves[i]&0b111111;
-        unsigned int  target = (possible_moves[i]&0b111111000000)>>6;
-        char s_r = 8-start/8 + '0';
-        char s_f = start%8 + 'a';
-        char t_r = 8-target/8 + '0';
-        char t_f = target%8 + 'a';
-        printf("Move: %c%c, %c%c\n", s_f, s_r, t_f, t_r);
-    }
+    PrintMoves();
     printf("\n");
     // random moves
     srand(time(NULL));
@@ -48,22 +38,14 @@ int main() {
         printf("Choose %d\n", random_number);
         MakeMove(possible_moves[random_number], board);
     }
-    printf("random pos:\n");
+    printf("random pos:\n\n");
     // seed random
     
     PrintBoard(board);
+    printf("\n");
     // BoardPrintBitBorads(board);
     generateMoves(board);
-    for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
-        if (possible_moves[i] == NULL_MOVE) break;
-        unsigned int  start = possible_moves[i]&0b111111;
-        unsigned int  target = (possible_moves[i]&0b111111000000)>>6;
-        char s_r = 8-start/8 + '0';
-        char s_f = start%8 + 'a';
-        char t_r = 8-target/8 + '0';
-        char t_f = target%8 + 'a';
-        printf("Move: %c%c, %c%c\n", s_f, s_r, t_f, t_r);
-    }
+    PrintMoves();
     printf("\n");
     return 0;
 }
