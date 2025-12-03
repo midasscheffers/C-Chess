@@ -200,13 +200,18 @@ void BoardPrintBitBorads(S_BOARD *pos){
 
 
 void MakeMove(U32 m, S_BOARD *pos){
-    unsigned int  start = m&0b111111;
-    unsigned int  target = (m&0b111111000000)>>6;
+    unsigned int start = m&0b111111;
+    unsigned int target = (m&0b111111000000)>>6;
+    unsigned int flag = m&~(0b111111111111)>>12;
     int s_piece = pos->pieces[start];
     int t_piece = pos->pieces[target];
-    RemovePiece(s_piece, start, pos);
-    RemovePiece(t_piece, target, pos);
-    SetPiece(s_piece, target, pos);
+    switch (flag){
+        default:
+            RemovePiece(s_piece, start, pos);
+            RemovePiece(t_piece, target, pos);
+            SetPiece(s_piece, target, pos);
+            break;
+    }
 
     pos->ply += 1;
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;
