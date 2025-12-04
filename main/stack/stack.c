@@ -22,9 +22,9 @@ int push(stack *s, unsigned long value){
     return 1;
 }
 
-int pop(stack *s){
+unsigned long pop(stack *s){
     if (*s==NULL)return STACK_EMPTY;
-    int res = (*s)->value;
+    unsigned long res = (*s)->value;
     node *tmp = *s;
     *s = (*s)->next;
     free(tmp);

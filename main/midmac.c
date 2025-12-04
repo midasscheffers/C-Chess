@@ -28,24 +28,51 @@ int main() {
     printf("\n");
     // random moves
     srand(time(NULL));
-    for (int j = 0; j<10;++j){
-        generateMoves(board);
-        int i;
-        for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
-            if (possible_moves[i] == NULL_MOVE) break;
-        }
-        int random_number = rand() % (i);
-        printf("Choose %d\n", random_number);
-        MakeMove(possible_moves[random_number], board);
-    }
-    printf("random pos:\n\n");
-    // seed random
+    // for (int j = 0; j<10;++j){
+    //     generateMoves(board);
+    //     int i;
+    //     for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
+    //         if (possible_moves[i] == NULL_MOVE) break;
+    //     }
+    //     int random_number = rand() % (i);
+    //     printf("Choose %d\n", random_number);
+    //     MakeMove(possible_moves[random_number], board);
+    // }
+    // printf("random pos:\n\n");
+    // // seed random
     
-    PrintBoard(board);
-    printf("\n");
-    // BoardPrintBitBorads(board);
-    generateMoves(board);
-    PrintMoves();
-    printf("\n");
+    // PrintBoard(board);
+    // printf("\n");
+    // // BoardPrintBitBorads(board);
+    // generateMoves(board);
+    // PrintMoves();
+    // printf("\n");
+
+    char inp;
+    scanf("%c", &inp);
+    while (inp != 'q')
+    {
+        switch (inp)
+        {
+        case 'r':
+            generateMoves(board);
+            int i;
+            for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
+                if (possible_moves[i] == NULL_MOVE) break;
+            }
+            int random_number = rand() % (i);
+            MakeMove(possible_moves[random_number], board);
+            PrintBoard(board);
+            break;
+        case 'u':
+            UnDoMove(board);
+            PrintBoard(board);
+            break;
+        default:
+            break;
+        }
+        scanf("%c", &inp);
+    }
+    
     return 0;
 }

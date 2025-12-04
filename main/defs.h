@@ -131,6 +131,7 @@ extern int LoadFen(char *FEN, S_BOARD *pos);
 extern void PrintBoard(S_BOARD *pos);
 extern void BoardPrintBitBorads(S_BOARD *pos);
 extern void MakeMove(U32 m, S_BOARD *pos);
+extern void UnDoMove(S_BOARD *pos);
 
 
 

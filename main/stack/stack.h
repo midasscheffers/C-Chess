@@ -12,7 +12,7 @@ typedef node* stack;
 
 stack create_stack();
 int push(stack *s, unsigned long value);
-int pop(stack *s);
+unsigned long pop(stack *s);
 
 
 #endif
