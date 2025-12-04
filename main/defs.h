@@ -65,6 +65,7 @@ typedef struct {
     int enSq;
     int fiftyMove;
     U64 posKey;
+    int captured_piece;
 } S_UNDO;
 
 typedef struct

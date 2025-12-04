@@ -214,34 +214,34 @@ void MakeMove(U32 m, S_BOARD *pos){
     }
 
     pos->ply += 1;
-    S_UNDO um = {m, pos->castlePerm, pos->epSq, pos->fiftyMove, pos->posKey};
+    S_UNDO um = {m, pos->castlePerm, pos->epSq, pos->fiftyMove, pos->posKey, t_piece};
     pos->history[pos->hisPly] = um;
     pos->hisPly += 1;
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;
 }
 
 void UnDoMove(S_BOARD *pos){
-    if (pos->hisPly == 0){
+    pos->hisPly -= 1;
+    if (pos->hisPly < 0){
         return;
     }
-    U32 m = (pos->history[pos->hisPly]).move;
-    printf("Undoing move:%lx\n", m);
+    S_UNDO um = pos->history[pos->hisPly];
+    U32 m = um.move;
     unsigned int start = m&0b111111;
     unsigned int target = (m&0b111111000000)>>6;
     unsigned int flag = m&~(0b111111111111)>>12;
-    int s_piece = pos->pieces[start];
-    int t_piece = pos->pieces[target];
+    int s_piece = pos->pieces[target];
+    int t_piece = um.captured_piece;
 
     switch (flag){
         default:
             RemovePiece(s_piece, target, pos);
             SetPiece(s_piece, start, pos);
-            SetPiece(t_piece, target, pos);
+            if (t_piece != EMPTY) SetPiece(t_piece, target, pos);
             break;
     }
 
 
     pos->ply -= 1;
-    pos->hisPly -= 1;
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;
 }
