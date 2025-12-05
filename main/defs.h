@@ -61,8 +61,8 @@ enum {FALSE, TRUE};
 
 typedef struct {
     U32 move;
-    int castlePer;
-    int enSq;
+    int castlePerm;
+    int epSq;
     int fiftyMove;
     U64 posKey;
     int captured_piece;
@@ -133,6 +133,7 @@ extern void PrintBoard(S_BOARD *pos);
 extern void BoardPrintBitBorads(S_BOARD *pos);
 extern void MakeMove(U32 m, S_BOARD *pos);
 extern void UnDoMove(S_BOARD *pos);
+extern int IsCheck(S_BOARD *board, int sq);
 
 
 

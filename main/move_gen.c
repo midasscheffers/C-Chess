@@ -1,6 +1,7 @@
 
 
 #include <stdio.h>
+#include "stack/stack.h"
 #include "defs.h"
 
 
@@ -59,7 +60,7 @@ void genarateKnightMoves(int *index, S_BOARD *board){
         for (int i = 0; i<8; i++){
             int target = KnightMovesOnSq[sq64][i];
             if (target == NO_SQ){
-                continue;
+                break;
             }
             if (SetMask[target] & friendBB){
                 continue;
@@ -205,7 +206,7 @@ void PrintMoves(){
 }
 
 
-void generateMoves(S_BOARD *pos){
+void generatePseudoMoves(S_BOARD *pos){
     //set global index into the posibble_move array
     int index = 0;
 
@@ -226,3 +227,37 @@ void generateMoves(S_BOARD *pos){
     // set last move to Null so we know where to stop
     possible_moves[index] = NULL_MOVE;
 }
+
+
+
+void generateMoves(S_BOARD *pos){
+// gen psudo moves
+    generatePseudoMoves(pos);
+    // PrintBoard(pos);
+    // PrintMoves();
+
+// filter the psudo moves
+    stack pos_moves_in_pos = create_stack();
+    for (int i = 0 ; i<MAX_POS_MOVES_ONE_POS; ++i){
+        if (possible_moves[i] == NULL_MOVE) break;
+        U32 m = possible_moves[i];
+        push(&pos_moves_in_pos, m);
+    }
+    U32 current_move;
+    int index = 0;
+    U64 KingBB = (pos->toMove == WHITE) ? pos->bitBoards[wK] : pos->bitBoards[bK];
+    int KingPos = PopBit(&KingBB);
+    while ((current_move = pop(&pos_moves_in_pos)) != STACK_EMPTY)
+    {   
+        MakeMove(current_move, pos);
+        if (!IsCheck(pos, KingPos)){
+            possible_moves[index] = current_move;
+            index += 1;
+        }
+        UnDoMove(pos);
+    }
+    
+    possible_moves[index] = NULL_MOVE;
+    // PrintMoves();
+}
+

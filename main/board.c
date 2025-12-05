@@ -52,6 +52,52 @@ void ResetBoard(S_BOARD *pos){
 }
 
 
+int IsCheck(S_BOARD *board, int sq){
+    // check if sq is controlled by enemy
+    int offset = (board->toMove == WHITE) ? 0 : 6;
+    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    // check knight moves away
+    for (int i = 0; i<8; i++){
+        int target = KnightMovesOnSq[sq][i];
+        if (target == NO_SQ){
+            break;
+        }
+        if (SetMask[target] & board->bitBoards[wN+offset]){
+            return 1;
+        }
+    }
+    // check sliding moves
+    for(int d =0;d<8;++d){
+        for (int i = 0; i<7; i++){
+            int target = SlidingMovesOnSq[sq][d][i];
+            if (target == NO_SQ){
+                break;
+            }
+            if (SetMask[target] & friendBB){
+                break;
+            }
+            if (d==0||d==2||d==5||d==7){
+                // check bishop or queen
+                if (SetMask[target] & board->bitBoards[wB+offset]
+                    || SetMask[target] & board->bitBoards[wQ+offset]){
+                    return 1;
+                }
+            }
+            else{
+                if (SetMask[target] & board->bitBoards[wR+offset]
+                    || SetMask[target] & board->bitBoards[wQ+offset]){
+                    return 1;
+                }
+            }
+            
+        }
+    }
+    // no checks found
+    return 0;
+}
+
+
 int LoadFen(char *FEN, S_BOARD *pos){
     int rank = RANK_1;
     int file = FILE_A;
@@ -205,6 +251,12 @@ void MakeMove(U32 m, S_BOARD *pos){
     unsigned int flag = m&~(0b111111111111)>>12;
     int s_piece = pos->pieces[start];
     int t_piece = pos->pieces[target];
+    //save current board details
+    S_UNDO um = {m, pos->castlePerm, pos->epSq, pos->fiftyMove, pos->posKey, t_piece};
+    pos->ply += 1;
+    pos->history[pos->hisPly] = um;
+    pos->hisPly += 1;
+    // make move
     switch (flag){
         default:
             RemovePiece(s_piece, start, pos);
@@ -212,11 +264,9 @@ void MakeMove(U32 m, S_BOARD *pos){
             SetPiece(s_piece, target, pos);
             break;
     }
+    // update castle perms and ep
 
-    pos->ply += 1;
-    S_UNDO um = {m, pos->castlePerm, pos->epSq, pos->fiftyMove, pos->posKey, t_piece};
-    pos->history[pos->hisPly] = um;
-    pos->hisPly += 1;
+    // pass turn
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;
 }
 
@@ -240,7 +290,8 @@ void UnDoMove(S_BOARD *pos){
             if (t_piece != EMPTY) SetPiece(t_piece, target, pos);
             break;
     }
-
+    pos->castlePerm = um.castlePerm; pos->epSq = um.epSq;
+    pos->fiftyMove = um.fiftyMove; pos->posKey = um.posKey;
 
     pos->ply -= 1;
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;
