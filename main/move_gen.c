@@ -4,98 +4,111 @@
 #include "stack/stack.h"
 #include "defs.h"
 
-
-void genaratePawnMoves(int *index, S_BOARD *board){
+void genaratePawnMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
     int dir_offset = (board->toMove == WHITE) ? 0 : 5;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wP+offset];
+    U64 current_bb = board->bitBoards[wP + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
         // check side dir
-        int flank1 = SlidingMovesOnSq[sq64][0+dir_offset][0];
-        int flank2 = SlidingMovesOnSq[sq64][2+dir_offset][0];
-        if ((flank1 != NO_SQ) && (SetMask[flank1]&enemBB)){
-            U32 m = sq64 | ((unsigned)flank1<<6);
+        int flank1 = SlidingMovesOnSq[sq64][0 + dir_offset][0];
+        int flank2 = SlidingMovesOnSq[sq64][2 + dir_offset][0];
+        if ((flank1 != NO_SQ) && (SetMask[flank1] & enemBB))
+        {
+            U32 m = sq64 | ((unsigned)flank1 << 6);
             possible_moves[*index] = m;
             *index += 1;
         }
-        if ((flank2 != NO_SQ) && (SetMask[flank2]&enemBB)){
-            U32 m = sq64 | ((unsigned)flank2<<6);
+        if ((flank2 != NO_SQ) && (SetMask[flank2] & enemBB))
+        {
+            U32 m = sq64 | ((unsigned)flank2 << 6);
             possible_moves[*index] = m;
             *index += 1;
         }
         // check front
-        int front = SlidingMovesOnSq[sq64][1+dir_offset][0];
+        int front = SlidingMovesOnSq[sq64][1 + dir_offset][0];
         int f_move_check = 0;
-        if ((front != NO_SQ) && !(SetMask[front]&(friendBB|enemBB))){
+        if ((front != NO_SQ) && !(SetMask[front] & (friendBB | enemBB)))
+        {
             f_move_check = 1;
-            U32 m = sq64 | ((unsigned)front<<6);
+            U32 m = sq64 | ((unsigned)front << 6);
             possible_moves[*index] = m;
             *index += 1;
         }
         // check double move
-        int two_front = SlidingMovesOnSq[sq64][1+dir_offset][1];
+        int two_front = SlidingMovesOnSq[sq64][1 + dir_offset][1];
         int first_rank = (board->toMove == WHITE) ? RANK_7 : RANK_2;
-        if (f_move_check && (sq64/8==first_rank) && (two_front != NO_SQ) && !(SetMask[two_front]&(friendBB|enemBB))){
-            U32 m = sq64 | ((unsigned)two_front<<6);
+        if (f_move_check && (sq64 / 8 == first_rank) && (two_front != NO_SQ) && !(SetMask[two_front] & (friendBB | enemBB)))
+        {
+            U32 m = sq64 | ((unsigned)two_front << 6);
             possible_moves[*index] = m;
             *index += 1;
         }
     }
 }
 
-
-void genarateKnightMoves(int *index, S_BOARD *board){
+void genarateKnightMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wN+offset];
+    U64 current_bb = board->bitBoards[wN + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
-        for (int i = 0; i<8; i++){
+        for (int i = 0; i < 8; i++)
+        {
             int target = KnightMovesOnSq[sq64][i];
-            if (target == NO_SQ){
+            if (target == NO_SQ)
+            {
                 break;
             }
-            if (SetMask[target] & friendBB){
+            if (SetMask[target] & friendBB)
+            {
                 continue;
             }
-            U32 m = sq64 | ((unsigned)target<<6);
+            U32 m = sq64 | ((unsigned)target << 6);
             possible_moves[*index] = m;
             *index += 1;
         }
     }
 }
 
-
-void genarateRookMoves(int *index, S_BOARD *board){
+void genarateRookMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wR+offset];
+    U64 current_bb = board->bitBoards[wR + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
-        for(int d =0;d<8;++d){
-            if (d==0||d==2||d==5||d==7) continue;
-            for (int i = 0; i<7; i++){
+        for (int d = 0; d < 8; ++d)
+        {
+            if (d == 0 || d == 2 || d == 5 || d == 7)
+                continue;
+            for (int i = 0; i < 7; i++)
+            {
                 int target = SlidingMovesOnSq[sq64][d][i];
-                if (target == NO_SQ){
+                if (target == NO_SQ)
+                {
                     break;
                 }
-                if (SetMask[target] & friendBB){
+                if (SetMask[target] & friendBB)
+                {
                     break;
                 }
-                U32 m = sq64 | ((unsigned)target<<6);
+                U32 m = sq64 | ((unsigned)target << 6);
                 possible_moves[*index] = m;
                 *index += 1;
-                if (SetMask[target] & enemBB){
+                if (SetMask[target] & enemBB)
+                {
                     break;
                 }
             }
@@ -103,30 +116,36 @@ void genarateRookMoves(int *index, S_BOARD *board){
     }
 }
 
-
-void genarateBishopMoves(int *index, S_BOARD *board){
+void genarateBishopMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wB+offset];
+    U64 current_bb = board->bitBoards[wB + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
-        for(int d =0;d<8;++d){
-            if (d==1 || d==3 || d==4 || d==6) continue;
-            for (int i = 0; i<7; i++){
+        for (int d = 0; d < 8; ++d)
+        {
+            if (d == 1 || d == 3 || d == 4 || d == 6)
+                continue;
+            for (int i = 0; i < 7; i++)
+            {
                 int target = SlidingMovesOnSq[sq64][d][i];
-                if (target == NO_SQ){
+                if (target == NO_SQ)
+                {
                     break;
                 }
-                if (SetMask[target] & friendBB){
+                if (SetMask[target] & friendBB)
+                {
                     break;
                 }
-                U32 m = sq64 | ((unsigned)target<<6);
+                U32 m = sq64 | ((unsigned)target << 6);
                 possible_moves[*index] = m;
                 *index += 1;
-                if (SetMask[target] & enemBB){
+                if (SetMask[target] & enemBB)
+                {
                     break;
                 }
             }
@@ -134,28 +153,34 @@ void genarateBishopMoves(int *index, S_BOARD *board){
     }
 }
 
-void genarateQueenMoves(int *index, S_BOARD *board){
+void genarateQueenMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wQ+offset];
+    U64 current_bb = board->bitBoards[wQ + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
-        for(int d =0;d<8;++d){
-            for (int i = 0; i<7; i++){
+        for (int d = 0; d < 8; ++d)
+        {
+            for (int i = 0; i < 7; i++)
+            {
                 int target = SlidingMovesOnSq[sq64][d][i];
-                if (target == NO_SQ){
+                if (target == NO_SQ)
+                {
                     break;
                 }
-                if (SetMask[target] & friendBB){
+                if (SetMask[target] & friendBB)
+                {
                     break;
                 }
-                U32 m = sq64 | ((unsigned)target<<6);
+                U32 m = sq64 | ((unsigned)target << 6);
                 possible_moves[*index] = m;
                 *index += 1;
-                if (SetMask[target] & enemBB){
+                if (SetMask[target] & enemBB)
+                {
                     break;
                 }
             }
@@ -163,83 +188,91 @@ void genarateQueenMoves(int *index, S_BOARD *board){
     }
 }
 
-void genarateKingMoves(int *index, S_BOARD *board){
+void genarateKingMoves(int *index, S_BOARD *board)
+{
     int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ?  board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ?  board->blackBB : board->whiteBB;
+    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
     int sq64 = 0;
-    U64 current_bb = board->bitBoards[wK+offset];
+    U64 current_bb = board->bitBoards[wK + offset];
     while (current_bb)
-    {   
+    {
         sq64 = PopBit(&current_bb);
-        for(int d =0;d<8;++d){
+        for (int d = 0; d < 8; ++d)
+        {
             int target = SlidingMovesOnSq[sq64][d][0];
-            if (target == NO_SQ){
+            if (target == NO_SQ)
+            {
                 continue;
             }
-            if (SetMask[target] & friendBB){
+            if (SetMask[target] & friendBB)
+            {
                 continue;
             }
-            U32 m = sq64 | ((unsigned)target<<6);
+            U32 m = sq64 | ((unsigned)target << 6);
             possible_moves[*index] = m;
             *index += 1;
-            if (SetMask[target] & enemBB){
+            if (SetMask[target] & enemBB)
+            {
                 continue;
             }
         }
     }
 }
 
-
-void PrintMoves(){
-    for (int i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
-        if (possible_moves[i] == NULL_MOVE) break;
-        unsigned int  start = possible_moves[i]&0b111111;
-        unsigned int  target = (possible_moves[i]&0b111111000000)>>6;
-        char s_r = 8-start/8 + '0';
-        char s_f = start%8 + 'a';
-        char t_r = 8-target/8 + '0';
-        char t_f = target%8 + 'a';
+void PrintMoves()
+{
+    for (int i = 0; i < MAX_POS_MOVES_ONE_POS; ++i)
+    {
+        if (possible_moves[i] == NULL_MOVE)
+            break;
+        unsigned int start = possible_moves[i] & 0b111111;
+        unsigned int target = (possible_moves[i] & 0b111111000000) >> 6;
+        char s_r = 8 - start / 8 + '0';
+        char s_f = start % 8 + 'a';
+        char t_r = 8 - target / 8 + '0';
+        char t_f = target % 8 + 'a';
         printf("Move: %c%c, %c%c\n", s_f, s_r, t_f, t_r);
     }
     printf("\n");
 }
 
-
-void generatePseudoMoves(S_BOARD *pos){
-    //set global index into the posibble_move array
+void generatePseudoMoves(S_BOARD *pos)
+{
+    // set global index into the posibble_move array
     int index = 0;
 
     // generate all possible moves
     // Knights
     genarateKnightMoves(&index, pos);
-    //Pawns
+    // Pawns
     genaratePawnMoves(&index, pos);
-    //Rooks
+    // Rooks
     genarateRookMoves(&index, pos);
-    //Bishops
+    // Bishops
     genarateBishopMoves(&index, pos);
-    //Queens
+    // Queens
     genarateQueenMoves(&index, pos);
-    //Kings
+    // Kings
     genarateKingMoves(&index, pos);
 
     // set last move to Null so we know where to stop
     possible_moves[index] = NULL_MOVE;
 }
 
-
-
-void generateMoves(S_BOARD *pos){
-// gen psudo moves
+void generateMoves(S_BOARD *pos)
+{
+    // gen psudo moves
     generatePseudoMoves(pos);
     // PrintBoard(pos);
     // PrintMoves();
 
-// filter the psudo moves
+    // filter the psudo moves
     stack pos_moves_in_pos = create_stack();
-    for (int i = 0 ; i<MAX_POS_MOVES_ONE_POS; ++i){
-        if (possible_moves[i] == NULL_MOVE) break;
+    for (int i = 0; i < MAX_POS_MOVES_ONE_POS; ++i)
+    {
+        if (possible_moves[i] == NULL_MOVE)
+            break;
         U32 m = possible_moves[i];
         push(&pos_moves_in_pos, m);
     }
@@ -248,16 +281,16 @@ void generateMoves(S_BOARD *pos){
     U64 KingBB = (pos->toMove == WHITE) ? pos->bitBoards[wK] : pos->bitBoards[bK];
     int KingPos = PopBit(&KingBB);
     while ((current_move = pop(&pos_moves_in_pos)) != STACK_EMPTY)
-    {   
+    {
         MakeMove(current_move, pos);
-        if (!IsCheck(pos, KingPos)){
+        if (!IsCheck(pos, KingPos))
+        {
             possible_moves[index] = current_move;
             index += 1;
         }
         UnDoMove(pos);
     }
-    
+
     possible_moves[index] = NULL_MOVE;
     // PrintMoves();
 }
-

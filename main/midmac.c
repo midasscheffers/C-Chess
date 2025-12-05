@@ -2,25 +2,28 @@
 #include <time.h>
 #include "defs.h"
 
-int main() {
+int main()
+{
     printf("\n");
-    
+
     // seed move arrays
     AllInit();
-    
-    for (int i = 0; i<BRD_SQ_NUM; ++i){
+
+    for (int i = 0; i < BRD_SQ_NUM; ++i)
+    {
         printf("%3d", i);
-        if (i%8==7) printf("\n");
+        if (i % 8 == 7)
+            printf("\n");
     }
     printf("\n");
-    
+
     // set up board
     S_BOARD board[1];
     ResetBoard(board);
     int _ = LoadFen(START_FEN, board);
     PrintBoard(board);
     printf("\n");
-    
+
     // move gen
     generateMoves(board);
     printf("Generated moves:\n");
@@ -40,7 +43,7 @@ int main() {
     // }
     // printf("random pos:\n\n");
     // // seed random
-    
+
     // PrintBoard(board);
     // printf("\n");
     // // BoardPrintBitBorads(board);
@@ -57,8 +60,10 @@ int main() {
         case 'r':
             generateMoves(board);
             int i;
-            for (i = 0; i<MAX_POS_MOVES_ONE_POS;++i){
-                if (possible_moves[i] == NULL_MOVE) break;
+            for (i = 0; i < MAX_POS_MOVES_ONE_POS; ++i)
+            {
+                if (possible_moves[i] == NULL_MOVE)
+                    break;
             }
             int random_number = rand() % (i);
             MakeMove(possible_moves[random_number], board);
@@ -73,6 +78,6 @@ int main() {
         }
         scanf("%c", &inp);
     }
-    
+
     return 0;
 }
