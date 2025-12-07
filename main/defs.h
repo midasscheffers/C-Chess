@@ -33,6 +33,11 @@ typedef unsigned long U32;
 #define MAX_POS_MOVES_ONE_POS 256
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
+#define MOVE_FROM(m)  ((m) & 0x3F)
+#define MOVE_TO(m)    (((m) >> 6) & 0x3F)
+#define MOVE_FLAG(m)  ((m) >> 12)
+
+
 enum {EMPTY, wK, wP, wN, wB, wR, wQ, bK, bP, bN, bB, bR, bQ}; // 0 EMPTY 1-6 White 7-12 Black
 enum {NONE, WHITE, BLACK, BOTH};
 enum {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
@@ -133,7 +138,7 @@ extern void PrintBoard(S_BOARD *pos);
 extern void BoardPrintBitBorads(S_BOARD *pos);
 extern void MakeMove(U32 m, S_BOARD *pos);
 extern void UnDoMove(S_BOARD *pos);
-extern int IsCheck(S_BOARD *board, int sq);
+extern int sqIsAttacked(S_BOARD *board, int sq, int side);
 
 
 

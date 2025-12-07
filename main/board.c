@@ -56,12 +56,12 @@ void ResetBoard(S_BOARD *pos)
     pos->posKey = 0ULL;
 }
 
-int IsCheck(S_BOARD *board, int sq)
+int sqIsAttacked(S_BOARD *board, int sq, int side)
 {
     // check if sq is controlled by enemy
-    int offset = (board->toMove == WHITE) ? 0 : 6;
-    U64 friendBB = (board->toMove == WHITE) ? board->whiteBB : board->blackBB;
-    U64 enemBB = (board->toMove == WHITE) ? board->blackBB : board->whiteBB;
+    int offset = (side == WHITE) ? 0 : 6;
+    U64 friendBB = (side == WHITE) ? board->whiteBB : board->blackBB;
+    U64 enemBB = (side == WHITE) ? board->blackBB : board->whiteBB;
     // check knight moves away
     for (int i = 0; i < 8; i++)
     {
@@ -125,42 +125,18 @@ int LoadFen(char *FEN, S_BOARD *pos)
         count = 1;
         switch (*FEN)
         {
-        case 'K':
-            piece = wK;
-            break;
-        case 'P':
-            piece = wP;
-            break;
-        case 'N':
-            piece = wN;
-            break;
-        case 'B':
-            piece = wB;
-            break;
-        case 'R':
-            piece = wR;
-            break;
-        case 'Q':
-            piece = wQ;
-            break;
-        case 'k':
-            piece = bK;
-            break;
-        case 'p':
-            piece = bP;
-            break;
-        case 'n':
-            piece = bN;
-            break;
-        case 'b':
-            piece = bB;
-            break;
-        case 'r':
-            piece = bR;
-            break;
-        case 'q':
-            piece = bQ;
-            break;
+        case 'K': piece = wK; break;
+        case 'P': piece = wP; break;
+        case 'N': piece = wN; break;
+        case 'B': piece = wB; break;
+        case 'R': piece = wR; break;
+        case 'Q': piece = wQ; break;
+        case 'k': piece = bK; break;
+        case 'p': piece = bP; break;
+        case 'n': piece = bN; break;
+        case 'b': piece = bB; break;
+        case 'r': piece = bR; break;
+        case 'q': piece = bQ; break;
 
         case '1':
         case '2':
@@ -252,45 +228,19 @@ void PrintBoard(S_BOARD *pos)
         char piece_char;
         switch (piece)
         {
-        case wK:
-            piece_char = 'K';
-            break;
-        case wP:
-            piece_char = 'P';
-            break;
-        case wN:
-            piece_char = 'N';
-            break;
-        case wB:
-            piece_char = 'B';
-            break;
-        case wR:
-            piece_char = 'R';
-            break;
-        case wQ:
-            piece_char = 'Q';
-            break;
-        case bK:
-            piece_char = 'k';
-            break;
-        case bP:
-            piece_char = 'p';
-            break;
-        case bN:
-            piece_char = 'n';
-            break;
-        case bB:
-            piece_char = 'b';
-            break;
-        case bR:
-            piece_char = 'r';
-            break;
-        case bQ:
-            piece_char = 'q';
-            break;
-        default:
-            piece_char = '.';
-            break;
+        case wK: piece_char = 'K'; break;
+        case wP: piece_char = 'P'; break;
+        case wN: piece_char = 'N'; break;
+        case wB: piece_char = 'B'; break;
+        case wR: piece_char = 'R'; break;
+        case wQ: piece_char = 'Q'; break;
+        case bK: piece_char = 'k'; break;
+        case bP: piece_char = 'p'; break;
+        case bN: piece_char = 'n'; break;
+        case bB: piece_char = 'b'; break;
+        case bR: piece_char = 'r'; break;
+        case bQ: piece_char = 'q'; break;
+        default: piece_char = '.'; break;
         }
         printf("  %c", piece_char);
         if (i % 8 == 7)
@@ -328,11 +278,25 @@ void BoardPrintBitBorads(S_BOARD *pos)
     printBitBoard(pos->emptyBB);
 }
 
+void updateCastlePerm(int piece, int sq, S_BOARD *pos){
+    switch (sq)
+    {
+    //for white
+        case E1: pos->castlePerm &= ~(WKCA | WQCA); break;
+        case A1: pos->castlePerm &= ~WQCA; break;
+        case H1: pos->castlePerm &= ~WKCA; break;
+    // for black
+        case E8: pos->castlePerm &= ~(BKCA | BQCA); break;
+        case A8: pos->castlePerm &= ~BQCA; break;
+        case H8: pos->castlePerm &= ~BKCA; break;
+    }
+}
+
 void MakeMove(U32 m, S_BOARD *pos)
 {
-    unsigned int start = m & 0b111111;
-    unsigned int target = (m & 0b111111000000) >> 6;
-    unsigned int flag = m & ~(0b111111111111) >> 12;
+    unsigned int start = MOVE_FROM(m);
+    unsigned int target = MOVE_TO(m);
+    unsigned int flag = MOVE_FLAG(m);
     int s_piece = pos->pieces[start];
     int t_piece = pos->pieces[target];
     // save current board details
@@ -349,7 +313,19 @@ void MakeMove(U32 m, S_BOARD *pos)
         SetPiece(s_piece, target, pos);
         break;
     }
-    // update castle perms and ep
+    // update castle perms
+
+    updateCastlePerm(s_piece, start, pos);
+    updateCastlePerm(t_piece, target, pos);
+
+    // update ep
+    pos->epSq = NO_SQ;
+    if (s_piece == wP || s_piece == bP) {
+        if (flag == MOVEFLAG_DOUBLEPAWN) {
+            pos->epSq = (start + target) / 2;   // square behind the pawn
+        }
+    }
+
 
     // pass turn
     pos->toMove = (pos->toMove == WHITE) ? BLACK : WHITE;

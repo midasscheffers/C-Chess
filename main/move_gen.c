@@ -4,6 +4,9 @@
 #include "stack/stack.h"
 #include "defs.h"
 
+
+
+
 void genaratePawnMoves(int *index, S_BOARD *board)
 {
     int offset = (board->toMove == WHITE) ? 0 : 6;
@@ -45,7 +48,7 @@ void genaratePawnMoves(int *index, S_BOARD *board)
         int first_rank = (board->toMove == WHITE) ? RANK_7 : RANK_2;
         if (f_move_check && (sq64 / 8 == first_rank) && (two_front != NO_SQ) && !(SetMask[two_front] & (friendBB | enemBB)))
         {
-            U32 m = sq64 | ((unsigned)two_front << 6);
+            U32 m = sq64 | ((unsigned)two_front << 6) | MOVEFLAG_DOUBLEPAWN<<12;
             possible_moves[*index] = m;
             *index += 1;
         }
@@ -266,31 +269,22 @@ void generateMoves(S_BOARD *pos)
     generatePseudoMoves(pos);
     // PrintBoard(pos);
     // PrintMoves();
-
-    // filter the psudo moves
-    stack pos_moves_in_pos = create_stack();
-    for (int i = 0; i < MAX_POS_MOVES_ONE_POS; ++i)
-    {
-        if (possible_moves[i] == NULL_MOVE)
-            break;
-        U32 m = possible_moves[i];
-        push(&pos_moves_in_pos, m);
-    }
-    U32 current_move;
+    int current_move = 0;
     int index = 0;
-    U64 KingBB = (pos->toMove == WHITE) ? pos->bitBoards[wK] : pos->bitBoards[bK];
-    int KingPos = PopBit(&KingBB);
-    while ((current_move = pop(&pos_moves_in_pos)) != STACK_EMPTY)
+    for (current_move; current_move<MAX_POS_MOVES_ONE_POS ; ++current_move)
     {
+        if (possible_moves[current_move] == NULL_MOVE) break;
         MakeMove(current_move, pos);
-        if (!IsCheck(pos, KingPos))
+        U64 KingBB = (pos->toMove == WHITE) ? pos->bitBoards[bK] : pos->bitBoards[wK];
+        int KingPos = PopBit(&KingBB);
+        if (!sqIsAttacked(pos, KingPos, pos->toMove))
         {
-            possible_moves[index] = current_move;
+            possible_moves[index] = possible_moves[current_move];
             index += 1;
         }
         UnDoMove(pos);
-    }
 
+    }
     possible_moves[index] = NULL_MOVE;
     // PrintMoves();
 }
